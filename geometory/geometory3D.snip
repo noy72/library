@@ -1,0 +1,101 @@
+snippet     geometory3D
+abbr        空間幾何学
+
+    const double EPS = 1e-9;
+    auto equals = [](double a, double b) { return fabs(a - b) < EPS; };
+
+    struct Point {
+        double x, y, z;
+        Point() {}
+        Point(double x, double y, double z) : x(x), y(y), z(z) {}
+        Point operator+(Point p) { return Point(x + p.x, y + p.y, z + p.z); }
+        Point operator-(Point p) { return Point(x - p.x, y - p.y, z - p.z); }
+        Point operator*(double k) { return Point(x * k, y * k, z * k); }
+        Point operator/(double k) { return Point(x / k, y / k, z / k); }
+        Point operator*(Point p) {
+            return Point(y * p.z - z * p.y, z * p.x - x * p.z, x * p.y - y * p.x);
+        }
+        double operator^(Point p) { return x * p.x + y * p.y + z * p.z; }
+        double norm() { return x * x + y * y + z * z; }
+        double abs() { return sqrt(norm()); }
+        bool operator<(const Point &p) const {
+            if (x != p.x) return x < p.x;
+            if (y != p.y) return y < p.y;
+            return z < p.z;
+        }
+        bool operator==(const Point &p) const {
+            return fabs(x - p.x) < EPS && fabs(y - p.y) < EPS &&
+                   fabs(z - p.z) < EPS;
+        }
+    };
+    istream &operator>>(istream &is, Point &p) {
+        is >> p.x >> p.y >> p.z;
+        return is;
+    }
+    ostream &operator<<(ostream &os, Point p) {
+        os << fixed << setprecision(12) << p.x << " " << p.y << " " << p.z;
+        return os;
+    }
+
+    typedef Point Vector;
+    typedef vector<Point> Polygon;
+
+    struct Segment {
+        Point p1, p2;
+        Segment() {}
+        Segment(Point p1, Point p2) : p1(p1), p2(p2) {}
+    };
+    typedef Segment Line;
+
+    istream &operator>>(istream &is, Segment &s) {
+        is >> s.p1 >> s.p2;
+        return is;
+    }
+
+    struct Sphere {
+        Point c;
+        double r;
+        Sphere() {}
+        Sphere(Point c, double r) : c(c), r(r) {}
+    };
+
+    istream &operator>>(istream &is, Sphere &c) {
+        is >> c.c >> c.r;
+        return is;
+    }
+
+    double norm(Vector a) { return a.x * a.x + a.y * a.y + a.z * a.z; }
+    double abs(Vector a) { return sqrt(norm(a)); }
+    double dot(Vector a, Vector b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+    Vector cross(Vector a, Vector b) {
+        return Vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
+                      a.x * b.y - a.y * b.x);
+    }
+
+    Point project(Line l, Point p) {
+        Point b = l.p2 - l.p1;
+        double t = dot(p - l.p1, b) / norm(b);
+        return l.p1 + b * t;
+    }
+
+    Point reflect(Line l, Point p) { return p + (project(l, p) - p) * 2.0; }
+
+    double getDistanceLP(Line l, Point p) {
+        return abs(cross(l.p2 - l.p1, p - l.p1) / abs(l.p2 - l.p1));
+    }
+
+    double getDistanceSP(Segment s, Point p) {
+        if (dot(s.p2 - s.p1, p - s.p1) < 0.0) return abs(p - s.p1);
+        if (dot(s.p1 - s.p2, p - s.p2) < 0.0) return abs(p - s.p2);
+        return getDistanceLP(s, p);
+    }
+
+    bool intersectSC(Segment s, Sphere c) {
+        double d = getDistanceSP(s, c.c);
+        if (d > c.r) return 0;
+        return !((abs(s.p1 - c.c) <= c.r) && (abs(s.p2 - c.c) <= c.r));
+    }
+    bool intersectSC(Point p1, Point p2, Sphere c) {
+        return intersectSC(Segment(p1, p2), c);
+    }
+

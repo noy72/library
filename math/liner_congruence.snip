@@ -1,0 +1,30 @@
+snippet     liner-congruence
+abbr        線型連立合同式
+    /* mod mでのaの逆元を求める.(gcd(a,m) = 1) */
+    int modinv(int a, int m) {
+        int x, y;
+        extgcd(a, m, x, y);
+        return (m + x % m) % m;
+    }
+
+    /* 連立線形方程式を解く.
+            A[i] * x ≡ B[i] (mod M[i])
+        なる方程式の解が
+            x ≡ b (mod m)
+        とかけるとき、(b, m)を返す.(存在しなければ(0, -1)) */
+    pair<int, int> liner_congruence(vector<int> A, vector<int> B, vector<int> M) {
+        int x = 0, m = 1;
+
+        for (int i = 0; i < A.size(); ++i) {
+            int a = A[i] * m, b = B[i] - A[i] * x, d = gcd(M[i], a);
+
+            if (b % d != 0) // 解なし
+                return make_pair(0, -1);
+
+            int t = b / d * modinv(a / d, M[i] / d) % (M[i] / d);
+            x = x + m * t;
+            m *= M[i] / d;
+        }
+
+        return make_pair((x % m + m) % m, m);
+    }

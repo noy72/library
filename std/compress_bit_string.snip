@@ -1,0 +1,22 @@
+snippet     compress-bit-string
+abbr        ビット列から，各ビットがいくつ連続しているかの数列を返す
+
+	// 0100001011110 -> 1 1 4 1 1 4 1
+	vector<int> compressBitString(const string& s){
+		vector<int> p;
+		int t = s.front() - '0';
+		int cnt = 0;
+		rep(i,s.size()){
+			if(s[i] == t + '0'){
+				cnt++;
+			}else{
+				p.emplace_back(cnt);
+				cnt = 1;
+				t ^= 1;
+			}
+		}
+		if(cnt != 0){
+			p.emplace_back(cnt);
+		}
+		return p;
+	}

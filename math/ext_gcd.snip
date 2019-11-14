@@ -1,0 +1,15 @@
+snippet     ext-gcd
+abbr        拡張ユークリッドの互除法
+    /* ax + by = gcd(a,b) の解 (x,y) を求め，
+     * d = gcd(a,b) を返す．
+     */
+    int extgcd(int a, int b, int &x, int &y){
+        int d = a;
+        if(b != 0){
+            d = extgcd(b, a % b, y, x);
+            y -= (a / b) * x;
+        }else{
+            x = 1; y = 0;
+        }
+        return d;
+    }

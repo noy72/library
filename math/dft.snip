@@ -1,0 +1,46 @@
+snippet     fft
+abbr        高速フーリエ変換
+
+    typedef complex<double> Complex;
+
+    vector<Complex> fft(vector<Complex> A, int n, int sgn = 1) {
+
+        if (n == 1) return A;
+
+        vector<Complex> f0, f1;
+        for (int i = 0; i < (n / 2); i++) {
+            f0.push_back(A[i * 2 + 0]);
+            f1.push_back(A[i * 2 + 1]);
+        }
+
+        f0 = fft(f0, n / 2, sgn), f1 = fft(f1, n / 2, sgn);
+
+        Complex zeta = Complex(cos(2.0 * M_PI / n), sin(2.0 * M_PI / n) * sgn);
+        Complex pow_zeta = 1;
+
+        for (int i = 0; i < n; i++) {
+            A[i] = f0[i % (n / 2)] + pow_zeta * f1[i % (n / 2)];
+            pow_zeta *= zeta;
+        }
+        return A;
+    }
+
+    vector<Complex> inv_fft(vector<Complex> A, int n) {
+        auto ret = fft(A, n, -1);
+        for (int i = 0; i < n; i++) { ret[i] /= n; }
+        return ret;
+    }
+
+    vector<Complex> multiply(vector<Complex>& X, vector<Complex>& Y) {
+        int n = 1;
+        while (n < (X.size() + Y.size() + 1)) n *= 2;
+
+        vector<Complex> ret;
+
+        X.resize(n), Y.resize(n);
+        X = fft(X, n, 1), Y = fft(Y, n, 1);
+
+        for (int i = 0; i < n; i++) { ret.push_back(X[i] * Y[i]); }
+        return inv_fft(ret, n);
+    }
+

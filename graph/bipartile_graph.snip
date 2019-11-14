@@ -1,0 +1,21 @@
+snippet     bipartite_graph
+abbr        二色彩色
+ void dfs(vector<vector<int>>& g, int cur, vector<int>& color){
+ 	for(auto to : g[cur]){
+ 		if(color[to] != -1) continue;
+ 		color[to] = color[cur] ^ 1;
+ 		dfs(g, to, color);
+ 	}
+ }
+ 
+ // 二部グラフかをチェック
+ bool check(vector<vector<int>>& g, vector<int>& color){
+ 	rep(i,g.size()){
+ 		for(auto to : g[i]){
+ 			if(color[i] == color[to]){
+ 				return false;
+ 			}
+ 		}
+ 	}
+ 	return true;
+ }

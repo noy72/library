@@ -12,8 +12,6 @@
 # 0 ~ n - 1 に含まれる、サイズkの部分集合を列挙する
 #bitSubSet
 # 部分集合のビット列を降順に列挙する
-#nibu-graph
-# 二部グラフ判定・色塗り
 #levenshteinDistance
 # 編集距離
 #matrixChainMultiplication
@@ -34,8 +32,6 @@
 # 文字列の置き換え
 #eulerPhi
 # オイラー関数
-#extgcd
-# 拡張ユークリッドの互除法
 #simultaneousLinearEquations
 # 連立一次方程式
 #flow
@@ -72,19 +68,13 @@
 # 全ての頂点を通る一筆書きの総数
 #levenshteinDistance
 # 編集距離を求めるdp
-#bfsOfAdjacencyMatrix
-# 隣接行列の幅優先探索
 #bfsOfGrid
 # グリッドの幅優先探索
 #dfsOfTree
 # 木の深さ優先探索
-#binarySearch
-# 二分探索
 #eratosthenes
 # 10^6以下の素数を全列挙
 #GreatestCommonDivisor
-# 最大公約数
-#gcd
 # 最小公倍数
 #lcm
 # うるう年判定
@@ -132,34 +122,6 @@
 # 2部マッチング
 
 
-
-#幅優先探索
-snippet bfsOfAdjacencyMatrix
-abbr 隣接行列の幅優先探索
-
- const int N = ;
-
- int M[N][N];
-
- void bfs(int n){
-    int dis[N]; //距離
-    queue<int> q; //訪問した点を入れる
-    rep(i,N) dis[i] = INF;
-
-    dis[1] = 0;
-    q.push(1);
-
-    int u;
-    while(!q.empty()){
-        u = q.front(); q.pop();
-        rep(v,n + 1){
-            if(M[u][v] && dis[v] == INF){
-                dis[v] = dis[u] + 1; //グラフの深さ 
-                q.push(v);
-            }
-        }
-    }
- }
 
 snippet     bfsOfGrid
 abbr        グリッドの幅優先探索
@@ -235,16 +197,6 @@ options     head
      range(i,1,n + 1){ cout << t[i].parent << ' ' << t[i].left << ' ' << t[i].right << endl; }
  }
 
-snippet     binarySearch
-abbr        二分探索
-
- int right = , left = ;
- rep(i,100){
-     int mid = (right + left) / 2;
-     if(C(mid)) right = mid;
-     else left = mid;
- }
-
 snippet     eratosthenes
 abbr        10^6以下の素数を全列挙
 options     head
@@ -260,22 +212,6 @@ options     head
              }
          }
      }
- }
-
-snippet     gcd
-abbr        最大公約数
-options     head
-    
- int gcd(int x, int y) {
-    int r;
-    if(x < y) swap(x, y);
-
-    while(y > 0){
-        r = x % y;
-        x = y;
-        y = r;
-    }
-    return x;
  }
 
 snippet     lcm
@@ -1460,19 +1396,6 @@ abbr        連立一次方程式
      return x;
  }
 
-snippet     extgcd
-abbr        拡張ユークリッドの互除法
- //ax + by = gcd(a,b) の解をもとめる
- int extgcd(int a, int b, int &x, int &y){
-     int d = a;
-     if(b != 0){
-         d = extgcd(b, a % b, y, x);
-         y -= (a / b) * x;
-     }else{
-         x = 1; y = 0;
-     }
-     return d; //gcd(x,y)
- }
 
 snippet     eulerPhi
 abbr        オイラー関数
@@ -1743,35 +1666,6 @@ abbr        連鎖行列積
      }
      return dp[1][n];
  }
-
-snippet     nibu-graph
-abbr        二部グラフ判定・色降り
-options     head
-    const int MAX_V = 100005;
-    vector<int> G[MAX_V];
-    
-    int color[MAX_V];
-    
-    bool dfs(int cur, int c){
-    	color[cur] = c;
-    	for(auto to : G[cur]){
-    		if(color[to] == c) return false;
-    		if(color[G[cur][to]] == 0 && not dfs(G[cur][to], -c)) return false;
-    	}
-    	return true;
-    }
-    
-    void solve(int n){
-    	rep(i,n){
-    		if(color[i] == 0){
-    			if(not dfs(i, 1)){
-    				cout << "No" << endl; //二部グラフではない
-    				return;
-    			}
-    		}
-    	}
-    	cout << "Yes" << endl; //二部グラフ
-    }
 
 snippet     bitSubSet
 abbr        部分集合のビット列を降順に列挙する

@@ -1,0 +1,10 @@
+snippet     get-digit-sum
+abbr        桁数の和を求める関数
+    int getDigitSum(int a){
+        int res = 0;
+        while(a != 0){
+            res += a % 10;
+            a /= 10;
+        }
+        return res;
+    }

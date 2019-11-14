@@ -1,0 +1,8 @@
+snippet     binary-search
+abbr        二分探索
+    int ok = , ng = ;
+    rep(i,100){
+        int mid = (ok + ng) / 2;
+        if(isOk(mid)) ok = mid;
+        else ng = mid;
+    }

@@ -1,0 +1,23 @@
+snippet     bfs_list
+abbr        グラフのBFS
+options     head
+ vector<int> bfs(int s, const Graph& g) {
+ 	queue<int> q;
+ 	q.emplace(s);
+  
+ 	vector<int> dis(g.size(), 1e18);
+ 	dis[s] = 0;
+  
+ 	vector<int> pre(g.size(), -1);
+ 	while (not q.empty()) {
+ 		int cur = q.front();
+ 		q.pop();
+ 		for (auto to : g[cur]) {
+ 			if (dis[to] != 1e18) continue;
+ 			pre[to] = cur;
+ 			dis[to] = dis[cur] + 1;
+ 			q.emplace(to);
+ 		}
+ 	}
+ 	return dis;
+ }

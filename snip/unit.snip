@@ -6,9 +6,9 @@ options     head
     const int M = 1000000007;
 
 snippet     inf
-abbr        const int INF = 1e8;
+abbr        const int INF = 1e18;
 options     head
-    const int INF = 1e8;
+    const int INF = 1e18;
 
 snippet     cinup
 abbr        cin高速化
@@ -57,17 +57,17 @@ abbr        define int long long
 options     head
     #define int long long
 
-snippet     yesno1
+snippet     yesno
 abbr        yesかnoの出力
 options     head
     cout << (f ? "yes" : "no") << endl;
 
-snippet     yesno2
+snippet     YesNo
 abbr        YesかNoの出力
 options     head
     cout << (f ? "Yes" : "No") << endl;
 
-snippet     yesno3
+snippet     YESNO
 abbr        YESかNOの出力
 options     head
     cout << (f ? "YES" : "NO") << endl;
@@ -124,3 +124,18 @@ abbr        EPS付きの大小比較、一致判定
  // a > 0 は sgn(a) > 0
  // a < b は sgn(a, b) < 0
  // a >= b は sgn(a, b) >= 0
+
+snippet     vout
+abbr        vectorを空白区切で出力
+ rep(i,v.size()){
+     if(i) cout << ' ';
+     cout << v[i];
+ }
+ cout << endl;
+
+snippet     prime
+abbr        10e9前後の素数
+    999999937
+    1000000021
+    1000010029
+    1000100077

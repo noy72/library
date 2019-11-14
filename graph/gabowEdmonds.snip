@@ -1,0 +1,115 @@
+snippet     gabowEdmonds
+abbr        一般マッチング
+    vector<pair<int, int>> gabowEdmonds(const vector<vector<int>>& graph) {
+        int n = graph.size();
+        vector<vector<pair<int, int>>> g(n + 1);
+        vector<pair<int, int>> edges;
+        int cnt = n + 1;
+        for (int i = 0; i < n; i++) {
+            for (auto to : graph[i]) {
+                if (i < to) {
+                    g[to + 1].emplace_back(i + 1, cnt);
+                    g[i + 1].emplace_back(to + 1, cnt++);
+                    edges.emplace_back(i + 1, to + 1);
+                }
+            }
+        }
+
+        vector<int> mate(n + 1, 0), label(n + 1, -1), first(n + 1, 0);
+        queue<int> q;
+
+        // first$B$NCY1dI>2A(B
+        function<int(int)> eval_first = [&](int x) {
+            if (label[first[x]] < 0) return first[x];
+            first[x] = eval_first(first[x]);
+            return first[x];
+        };
+
+        function<void(int, int)> rematch = [&](int v, int w) {
+            int t = mate[v];
+            mate[v] = w;
+            if (mate[t] != v) return;
+
+            if (label[v] <= n) {
+                mate[t] = label[v];
+                rematch(label[v], t);
+            } else {
+                int x, y;
+                tie(x, y) = edges[label[v] - n - 1];
+                rematch(x, y);
+                rematch(y, x);
+            }
+        };
+
+        function<void(int, int, int)> assignLabel = [&](int x, int y, int num) {
+            int r = eval_first(x);
+            int s = eval_first(y);
+            if (r == s) return;
+
+            label[r] = -num;
+            label[s] = -num;
+            int join = 0;
+            while (true) {
+                if (s != 0) swap(r, s);
+                r = eval_first(label[mate[r]]);
+                if (label[r] == -num) {
+                    join = r;
+                    break;
+                }
+                label[r] = -num;
+            }
+
+            int v = first[x];
+            while (v != join) {
+                q.emplace(v);
+                label[v] = num;
+                first[v] = join;
+                v = first[label[mate[v]]];
+            }
+            v = first[y];
+            while (v != join) {
+                q.emplace(v);
+                label[v] = num;
+                first[v] = join;
+                v = first[label[mate[v]]];
+            }
+            return;
+        };
+
+        function<bool(int)> augment_check = [&](int u) {
+            first[u] = label[u] = 0;
+            q.emplace(u);
+            while (not q.empty()) {
+                int x = q.front();
+                q.pop();
+                for (auto e : g[x]) {
+                    int y = e.first;
+                    if (mate[y] == 0 and y != u) {
+                        mate[y] = x;
+                        rematch(x, y);
+                        return true;
+                    } else if (label[y] >= 0) {
+                        assignLabel(x, y, e.second);
+                    } else if (label[mate[y]] < 0) {
+                        label[mate[y]] = x;
+                        first[mate[y]] = y;
+                        q.emplace(mate[y]);
+                    }
+                }
+            }
+            return false;
+        };
+
+        for (int i = 1; i <= n; i++) {
+            q = queue<int>();
+            if (mate[i] != 0) continue;
+            if (augment_check(i)) fill(label.begin(), label.end(), -1);
+        }
+
+        vector<pair<int, int>> ans;
+        for (int i = 1; i <= n; i++) {
+            if (i < mate[i]) ans.emplace_back(i - 1, mate[i] - 1);
+        }
+        return ans;
+    }
+
